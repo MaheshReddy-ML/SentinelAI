@@ -110,11 +110,11 @@ sentinel-ai/
 ## 🚀 Quick start
 
 ```bash
-git clone <your-repository-url>
+git clone <https://github.com/MaheshReddy-ML/SentinelAI>
 cd sentinel-ai
 
 python3 -m venv .venv
-source .venv/bin/activate       # Windows: .venv\\Scripts\\activate
+source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
