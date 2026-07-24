@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "rule_set": "Fraud Rules",
+    "version": "1.0.0",
+    "organization": "Demo Configuration",
+    "environment": "Hackathon",
+    "last_updated": "2026-07-24",
+    "author": "SentinelAI Team"
+  },
+  "rules": [
+    {
+      "rule_id": "FRD-001",
+      "name": "Large Transaction",
+      "description": "Review unusually large transactions.",
+      "enabled": true,
+      "priority": 1,
+      "action": "merchant_payment",
+      "conditions": {
+        "min_amount": 100000
+      },
+      "decision": "review",
+      "confidence": 0.95,
+      "severity": "high",
+      "reason": "Transaction exceeds configured monitoring threshold."
+    },
+    {
+      "rule_id": "FRD-002",
+      "name": "New Device",
+      "description": "Review transactions from unknown devices.",
+      "enabled": true,
+      "priority": 2,
+      "action": "merchant_payment",
+      "conditions": {
+        "new_device": true
+      },
+      "decision": "review",
+      "confidence": 0.90,
+      "severity": "medium",
+      "reason": "Transaction initiated from a new device."
+    },
+    {
+      "rule_id": "FRD-003",
+      "name": "International Transaction",
+      "description": "Review foreign transactions.",
+      "enabled": true,
+      "priority": 3,
+      "action": "merchant_payment",
+      "conditions": {
+        "international": true
+      },
+      "decision": "review",
+      "confidence": 0.88,
+      "severity": "medium",
+      "reason": "International payment requires additional verification."
+    }
+  ]
+}

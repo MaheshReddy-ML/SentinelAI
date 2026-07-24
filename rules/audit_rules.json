@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "rule_set": "Audit Rules",
+    "version": "1.0.0",
+    "organization": "Demo Configuration",
+    "environment": "Hackathon",
+    "last_updated": "2026-07-24",
+    "author": "SentinelAI Team"
+  },
+  "rules": [
+    {
+      "rule_id": "AUD-001",
+      "name": "Audit High Risk Decisions",
+      "enabled": true,
+      "priority": 1,
+      "action": "*",
+      "conditions": {
+        "severity": "high"
+      },
+      "decision": "approve",
+      "confidence": 1.0,
+      "severity": "low",
+      "reason": "Store decision for audit and compliance review."
+    },
+    {
+      "rule_id": "AUD-002",
+      "name": "Audit Blocked Requests",
+      "enabled": true,
+      "priority": 2,
+      "action": "*",
+      "conditions": {
+        "decision": "block"
+      },
+      "decision": "approve",
+      "confidence": 1.0,
+      "severity": "low",
+      "reason": "Persist blocked requests for regulatory reporting."
+    }
+  ]
+}

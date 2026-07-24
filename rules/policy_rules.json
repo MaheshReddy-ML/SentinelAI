@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "rule_set": "Policy Rules",
+    "version": "1.0.0",
+    "organization": "Demo Configuration",
+    "environment": "Hackathon",
+    "last_updated": "2026-07-24",
+    "author": "SentinelAI Team"
+  },
+  "rules": [
+    {
+      "rule_id": "POL-001",
+      "name": "Automatic Refund Approval",
+      "description": "Approve refund requests below the configured threshold.",
+      "enabled": true,
+      "priority": 1,
+      "action": "refund",
+      "conditions": {
+        "max_amount": 20000
+      },
+      "decision": "approve",
+      "confidence": 0.99,
+      "severity": "low",
+      "reason": "Refund amount is within the automatic approval threshold."
+    },
+    {
+      "rule_id": "POL-002",
+      "name": "Large Refund Review",
+      "description": "Review large refund requests.",
+      "enabled": true,
+      "priority": 2,
+      "action": "refund",
+      "conditions": {
+        "min_amount": 20001,
+        "max_amount": 100000
+      },
+      "decision": "review",
+      "confidence": 0.95,
+      "severity": "medium",
+      "reason": "Refund exceeds the automatic approval threshold."
+    },
+    {
+      "rule_id": "POL-003",
+      "name": "Excessive Refund Block",
+      "description": "Block excessively large refund requests.",
+      "enabled": true,
+      "priority": 3,
+      "action": "refund",
+      "conditions": {
+        "min_amount": 100001
+      },
+      "decision": "block",
+      "confidence": 1.0,
+      "severity": "high",
+      "reason": "Refund amount exceeds the maximum permitted threshold."
+    },
+    {
+      "rule_id": "POL-004",
+      "name": "Automatic Credit Limit Increase",
+      "description": "Automatically approve small credit limit increase requests.",
+      "enabled": true,
+      "priority": 1,
+      "action": "credit_limit_increase",
+      "conditions": {
+        "max_amount": 50000
+      },
+      "decision": "approve",
+      "confidence": 0.95,
+      "severity": "low",
+      "reason": "Requested increase is within the automatic approval threshold."
+    },
+    {
+      "rule_id": "POL-005",
+      "name": "Large Credit Limit Increase",
+      "description": "Review high-value credit limit increase requests.",
+      "enabled": true,
+      "priority": 2,
+      "action": "credit_limit_increase",
+      "conditions": {
+        "min_amount": 50001
+      },
+      "decision": "review",
+      "confidence": 0.93,
+      "severity": "medium",
+      "reason": "Requested increase requires additional verification."
+    },
+    {
+      "rule_id": "POL-006",
+      "name": "Card Replacement",
+      "description": "Allow card replacement requests.",
+      "enabled": true,
+      "priority": 1,
+      "action": "card_replacement",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 1.0,
+      "severity": "low",
+      "reason": "Card replacement is permitted."
+    },
+    {
+      "rule_id": "POL-007",
+      "name": "Account Freeze",
+      "description": "Allow immediate account freeze requests.",
+      "enabled": true,
+      "priority": 1,
+      "action": "account_freeze",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 1.0,
+      "severity": "low",
+      "reason": "Account freeze requests are always permitted."
+    },
+    {
+      "rule_id": "POL-008",
+      "name": "Account Unfreeze",
+      "description": "Require manual verification before unfreezing an account.",
+      "enabled": true,
+      "priority": 1,
+      "action": "account_unfreeze",
+      "conditions": {},
+      "decision": "review",
+      "confidence": 0.98,
+      "severity": "medium",
+      "reason": "Identity verification is required before account unfreezing."
+    },
+    {
+      "rule_id": "POL-009",
+      "name": "Merchant Payment",
+      "description": "Allow merchant payments within policy limits.",
+      "enabled": true,
+      "priority": 1,
+      "action": "merchant_payment",
+      "conditions": {
+        "max_amount": 100000
+      },
+      "decision": "approve",
+      "confidence": 0.96,
+      "severity": "low",
+      "reason": "Payment complies with organizational policy."
+    },
+    {
+      "rule_id": "POL-010",
+      "name": "Travel Booking",
+      "description": "Allow travel booking requests.",
+      "enabled": true,
+      "priority": 1,
+      "action": "travel_booking",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 0.95,
+      "severity": "low",
+      "reason": "Travel booking is an approved customer action."
+    },
+    {
+      "rule_id": "POL-011",
+      "name": "Balance Inquiry",
+      "description": "Allow balance inquiry requests.",
+      "enabled": true,
+      "priority": 1,
+      "action": "balance_inquiry",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 1.0,
+      "severity": "low",
+      "reason": "Balance inquiries are always permitted."
+    },
+    {
+      "rule_id": "POL-012",
+      "name": "Transaction Dispute",
+      "description": "Route disputed transactions for manual review.",
+      "enabled": true,
+      "priority": 1,
+      "action": "dispute_transaction",
+      "conditions": {},
+      "decision": "review",
+      "confidence": 0.97,
+      "severity": "medium",
+      "reason": "Disputed transactions require investigation before resolution."
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Runtime dependency for the typed request/decision contracts.
+pydantic>=2.0,<3.0
