@@ -13,8 +13,11 @@ dependencies = [
     "typer>=0.12,<1.0",
 ]
 
+[project.optional-dependencies]
+local-llm = ["mlx-lm>=0.25.2"]
+
 [project.scripts]
 sentinel = "cli.app:app"
 
 [tool.setuptools.packages.find]
-include = ["cli*", "models*", "schemas*"]
+include = ["cli*", "models*", "schemas*", "utils*"]

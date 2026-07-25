@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
@@ -23,6 +23,7 @@ class TransactionDetails(BaseModel):
 
     amount: Optional[float] = Field(
         default=None,
+        gt=0,
         description="Transaction amount"
     )
 
@@ -103,6 +104,6 @@ class FinancialRequest(BaseModel):
     )
 
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=lambda: datetime.now(UTC),
         description="Request creation timestamp"
     )

@@ -1,49 +1,32 @@
-import pytest
-
+from schemas.enums import ActionType, DecisionType, IntentType
+from schemas.request import FinancialRequest, TransactionDetails
 from models.experts.policy_expert import PolicyExpert
-from schemas.enums import (
-    DecisionType,
-    ExpertType,
-)
 
 
-class DummyRequest:
-    action = "refund"
-    amount = 15000
+def _refund_request(amount: float) -> FinancialRequest:
+    return FinancialRequest(
+        request_id="request-1",
+        user_id="user-1",
+        session_id="session-1",
+        intent=IntentType.CUSTOMER_REQUEST,
+        action=ActionType.REFUND,
+        transaction=TransactionDetails(amount=amount, currency="USD"),
+    )
 
 
-def test_default_review(monkeypatch):
-    """No matching rules should return REVIEW."""
-
+def test_default_review_when_no_policy_rule_matches() -> None:
     expert = PolicyExpert()
-
     expert.rules = []
 
-    output = expert.evaluate(DummyRequest())
+    output = expert.evaluate(_refund_request(15_000))
 
-    assert output.expert == ExpertType.POLICY
     assert output.decision == DecisionType.REVIEW
+    assert output.reasoning == "No matching policy rule found."
 
 
-def test_matching_rule(monkeypatch):
-    """A matching rule should be returned."""
-
+def test_policy_uses_real_request_contract_at_threshold_boundaries() -> None:
     expert = PolicyExpert()
 
-    rule = expert.rules[0]
-
-    monkeypatch.setattr(
-        expert,
-        "_matches_action",
-        lambda *_: True,
-    )
-
-    monkeypatch.setattr(
-        "utils.condition_evaluator.ConditionEvaluator.evaluate",
-        lambda *_: True,
-    )
-
-    output = expert.evaluate(DummyRequest())
-
-    assert output.decision == rule.decision
-    assert output.confidence == rule.confidence
+    assert expert.evaluate(_refund_request(20_000)).decision == DecisionType.APPROVE
+    assert expert.evaluate(_refund_request(20_001)).decision == DecisionType.REVIEW
+    assert expert.evaluate(_refund_request(100_001)).decision == DecisionType.BLOCK

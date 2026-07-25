@@ -21,21 +21,21 @@ class ConditionEvaluator:
         request: FinancialRequest,
         value: float,
     ) -> bool:
-        return request.transaction.amount >= value
+        return request.transaction.amount is not None and request.transaction.amount >= value
 
     @staticmethod
     def _max_amount(
         request: FinancialRequest,
         value: float,
     ) -> bool:
-        return request.transaction.amount <= value
+        return request.transaction.amount is not None and request.transaction.amount <= value
 
     @staticmethod
     def _country(
         request: FinancialRequest,
         value: str,
     ) -> bool:
-        return request.transaction.country == value
+        return request.context.location == value
 
     @staticmethod
     def _currency(
@@ -49,14 +49,38 @@ class ConditionEvaluator:
         request: FinancialRequest,
         value: str,
     ) -> bool:
-        return request.transaction.category == value
+        return request.metadata.get("category") == value
 
     @staticmethod
     def _payment_method(
         request: FinancialRequest,
         value: str,
     ) -> bool:
-        return request.transaction.payment_method == value
+        return request.metadata.get("payment_method") == value
+
+    @staticmethod
+    def _metadata_value(
+        request: FinancialRequest,
+        key: str,
+        value: Any,
+    ) -> bool:
+        return request.metadata.get(key) == value
+
+    @staticmethod
+    def _kyc_verified(request: FinancialRequest, value: bool) -> bool:
+        return ConditionEvaluator._metadata_value(request, "kyc_verified", value)
+
+    @staticmethod
+    def _aml_flag(request: FinancialRequest, value: bool) -> bool:
+        return ConditionEvaluator._metadata_value(request, "aml_flag", value)
+
+    @staticmethod
+    def _new_device(request: FinancialRequest, value: bool) -> bool:
+        return ConditionEvaluator._metadata_value(request, "new_device", value)
+
+    @staticmethod
+    def _international(request: FinancialRequest, value: bool) -> bool:
+        return ConditionEvaluator._metadata_value(request, "international", value)
 
     _HANDLERS: dict[str, ConditionHandler] = {
         "min_amount": _min_amount.__func__,
@@ -65,6 +89,10 @@ class ConditionEvaluator:
         "currency": _currency.__func__,
         "category": _category.__func__,
         "payment_method": _payment_method.__func__,
+        "kyc_verified": _kyc_verified.__func__,
+        "aml_flag": _aml_flag.__func__,
+        "new_device": _new_device.__func__,
+        "international": _international.__func__,
     }
 
     @classmethod

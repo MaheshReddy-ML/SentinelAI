@@ -4,33 +4,34 @@
 
 <a href="#-run-the-cli"><img src="https://img.shields.io/badge/CLI-Rich%20%2B%20Typer-55d6be?style=for-the-badge&logo=gnometerminal&logoColor=white" alt="Rich and Typer CLI" /></a>
 <img src="https://img.shields.io/badge/status-active%20development-f6c453?style=for-the-badge" alt="Active development" />
-<img src="https://img.shields.io/badge/runtime-demo%20adapter-7aa2f7?style=for-the-badge" alt="Demo adapter" />
+<img src="https://img.shields.io/badge/runtime-local%20MLX-7aa2f7?style=for-the-badge" alt="Local MLX runtime" />
 <img src="https://img.shields.io/badge/python-3.12%2B-ff7a90?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.12 or later" />
 
 <p>
   <a href="#-run-the-cli">Run CLI</a> ·
   <a href="#-what-is-live">What is live</a> ·
   <a href="#-architecture">Architecture</a> ·
-  <a href="#-delivery-radar">Delivery radar</a>
+  <a href="#-decision-traceability">Decision traceability</a>
 </p>
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=17&duration=2600&pause=700&color=55D6BE&center=true&vCenter=true&width=760&lines=Governance+reports+for+high-stakes+financial+requests;A+beautiful+terminal+interface+for+an+evolving+engine;Policy+%E2%86%92+Fraud+%E2%86%92+Risk+%E2%86%92+Compliance+%E2%86%92+Spend" alt="Animated SentinelAI tagline" />
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=17&duration=2600&pause=700&color=55D6BE&center=true&vCenter=true&width=760&lines=Local+extraction.+Deterministic+governance.;Policy+%E2%86%92+Fraud+%E2%86%92+Risk+%E2%86%92+Compliance+%E2%86%92+Spend+%E2%86%92+Audit;Every+decision+shows+its+matched+rules." alt="Animated SentinelAI tagline" />
+
+<img src="https://img.shields.io/badge/●%20rule%20trace-live-55d6be?style=flat-square" alt="Animated rule trace status" />
+<img src="https://img.shields.io/badge/●%20local%20inference-on--device-7aa2f7?style=flat-square" alt="On-device local inference" />
 
 </div>
 
 <br />
 
-> **SentinelAI** is an active financial-AI governance project. Today it provides typed contracts, rule-set scaffolding, and a polished terminal report experience. Its live governance engine is deliberately still being built.
+> **SentinelAI** is an active financial-AI governance project. A local MLX model extracts a typed request; JSON rules and deterministic expert aggregation make every governance decision.
 
 ```text
- request  ──►  SentinelAI CLI  ──►  governance report
-                  │
-                  └── demo adapter today · real engine integration next
+ natural language  ──►  local MLX extractor  ──►  Pydantic request  ──►  rule-driven governance report
 ```
 
 ## ⚡ Run the CLI
 
-The CLI is ready to explore now. It renders a deterministic demonstration report; it **does not yet evaluate policy, fraud, risk, compliance, or spend rules**.
+The CLI supports a local Apple-Silicon LLM for request extraction and then evaluates the request with JSON governance rules. The LLM never makes a governance decision.
 
 ```bash
 git clone https://github.com/MaheshReddy-ML/SentinelAI.git
@@ -48,13 +49,23 @@ python -m pip install -e .
 sentinel analyze simulations/sample.json
 ```
 
+### Analyze natural language locally
+
+```bash
+python scripts/setup_local_llm.py
+# Use single quotes in zsh: double quotes expand $1250 before SentinelAI receives it.
+sentinel analyze --prompt 'Book a business flight to New York tomorrow for $1250 using my corporate card.'
+```
+
+See [local model setup](LOCAL_LLM.md) for the selected MLX model, fallback, and machine-measured benchmark command.
+
 ### Start interactive mode
 
 ```bash
 sentinel analyze
 ```
 
-Interactive mode collects amount, currency, merchant, category, country, payment method, timestamp, and an optional user ID.
+Interactive mode accepts a natural-language request. If an approval-critical fact such as amount is missing, SentinelAI asks a focused clarification instead of inventing a value.
 
 ### If `sentinel` is not found
 
@@ -76,17 +87,17 @@ Or skip activation entirely:
 ```text
 SENTINELAI // Adaptive Governance Platform
 
-✓ Validating request                 ✓ Running Compliance Expert
-✓ Loading governance rules           ✓ Running Spend Expert
-✓ Routing experts                    ✓ Aggregating results
-✓ Running Policy / Fraud / Risk      ✓ Generating explanation
+● Extracting validated request       ● Running Compliance Expert
+● Loading governance rules           ● Running Spend Expert
+● Routing experts                    ● Running Audit Expert
+● Running Policy / Fraud / Risk      ● Aggregating results
 
 ──────────────── SentinelAI Governance Report ────────────────
- Request Summary  ·  Expert Results  ·  Final Decision
- Explanation      ·  Runtime / confidence metrics
+ AI Understanding  ·  Request Summary  ·  Expert Results
+ Matched rule IDs  ·  Final Decision  ·  Runtime metrics
 ```
 
-The UI is intentionally isolated in [`cli/`](cli/). It only builds a request, calls `analyze_transaction(request)`, and beautifully renders the returned result. The current implementation of that function lives in [`cli/mock_engine.py`](cli/mock_engine.py) and is a safe, deterministic adapter that can be replaced when the real engine lands.
+The UI remains isolated in [`cli/`](cli/). It builds a request, calls `analyze_transaction(request)`, and renders the returned result. `models/llm/` is restricted to local natural-language extraction; [`cli/mock_engine.py`](cli/mock_engine.py) invokes deterministic rule experts and aggregates their results.
 
 ## 🟢 What is live
 
@@ -95,33 +106,34 @@ The UI is intentionally isolated in [`cli/`](cli/). It only builds a request, ca
 | Typed request, decision, and expert contracts | ✅ | Pydantic models in [`schemas/`](schemas/) |
 | Governance-domain layout | ✅ | Policy, fraud, risk, compliance, spend, and audit boundaries |
 | Versioned rule documents | ✅ | JSON configurations in [`rules/`](rules/) |
-| Rich terminal interface | ✅ | Interactive and JSON-file flows, report tables, panels, and metrics |
+| Rich terminal interface | ✅ | Natural language, focused clarifications, live stages, panels, and metrics |
 | CLI packaging | ✅ | `sentinel analyze` after `pip install -e .` |
 | CLI behavior tests | ✅ | Focused tests for sample loading and report rendering |
-| Rule loading and condition evaluation | 🛠️ | Engine work is in progress; it is not connected to the CLI |
-| Expert execution, routing, aggregation, and live explanation | ⏳ | Next engine-integration track |
+| Rule loading and condition evaluation | ✅ | Validated JSON rules evaluated against typed requests |
+| Local request extraction | ✅ | MLX adapter with JSON validation and one retry |
+| Expert execution and deterministic aggregation | ✅ | Policy, fraud, risk, compliance, spend, and audit reports with rule traceability |
 | API, observability, and deployment | ⏳ | Future delivery track |
 
 ## 🧭 Architecture
 
 ```mermaid
 flowchart LR
-    R[Financial Request] --> CLI[SentinelAI CLI]
-    CLI --> ADAPTER[Engine Adapter]
-    ADAPTER -. current .-> MOCK[Deterministic Demo Result]
-    ADAPTER -. future .-> ROUTER[Adaptive Router]
+    NL[Natural-language request] --> LLM[Local MLX extractor]
+    LLM --> R[Validated FinancialRequest]
+    R --> CLI[SentinelAI CLI]
+    CLI --> ROUTER[Adaptive Router]
     ROUTER --> P[Policy]
     ROUTER --> F[Fraud]
     ROUTER --> RK[Risk]
     ROUTER --> C[Compliance]
     ROUTER --> S[Spend]
-    P & F & RK & C & S --> A[Aggregator]
+    ROUTER --> AU[Audit]
+    P & F & RK & C & S & AU --> A[Aggregator]
     A --> E[Explanation]
-    MOCK --> REPORT[Rich Governance Report]
     E --> REPORT
 ```
 
-The dashed path is the current, intentionally non-governing demo mode. The solid engine path is the architecture SentinelAI is being built to support.
+The local model only extracts request data. Rule documents and experts remain the sole governance decision path.
 
 ## 🧱 Repository map
 
@@ -137,23 +149,11 @@ sentinel-ai/
 └── run.py               # Direct project entry point
 ```
 
-## 📡 Delivery radar
+## 🔎 Decision traceability
 
-```mermaid
-gantt
-    title SentinelAI delivery track
-    dateFormat  YYYY-MM-DD
-    axisFormat  %b
-    section Available now
-    Contracts and rule scaffolding  :done, 2026-07-01, 1d
-    Rich CLI demo experience        :done, 2026-07-25, 1d
-    section Next updates
-    Rule loading and evaluation     :active, 2026-07-26, 14d
-    Expert and aggregation wiring   :2026-08-09, 14d
-    Live engine adapter             :2026-08-23, 7d
-```
+Each report includes an **AI Understanding** panel (explicit facts, missing facts, and timings), then one row per expert with matched rule IDs, decision, confidence, and execution time. The final decision is derived from the deterministic expert outputs; the local model never approves, blocks, reviews, or scores a request.
 
-Dates in the radar are visual sequencing, not delivery promises. Updates will progressively replace the demo adapter while preserving the same CLI command and report layout.
+When no policy exists for an action, the relevant expert returns an intentional `REVIEW` with an undefined-policy explanation rather than a generic pass.
 
 ## 🔐 Governance lenses
 
@@ -171,12 +171,12 @@ Dates in the radar are visual sequencing, not delivery promises. Updates will pr
 ```bash
 source .venv/bin/activate
 python -m pytest -q
-python -m compileall cli schemas tests
+python -m compileall cli models schemas utils tests
 ```
 
 ## ⚖️ Project status
 
-SentinelAI is **not production-ready**. Rule files and the current CLI report are demonstration material, not financial, legal, compliance, or investment advice. Do not use the current mock output to approve, block, or review real transactions.
+SentinelAI is a hackathon/demo governance platform, not financial, legal, compliance, or investment advice. Its rule documents are illustrative controls and must be reviewed, versioned, and approved by the institution before any real transaction use.
 
 <div align="center">
 

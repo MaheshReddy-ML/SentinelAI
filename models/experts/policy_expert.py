@@ -33,9 +33,9 @@ class PolicyExpert(BaseExpert):
 
         self.rules: list[Rule] = sorted(
             (
-                Rule.model_validate(rule)
-                for rule in rule_data.get("rules", [])
-                if rule.get("enabled", True)
+                rule
+                for rule in rule_data["rules"]
+                if rule.enabled
             ),
             key=lambda rule: rule.priority,
         )
@@ -71,7 +71,7 @@ class PolicyExpert(BaseExpert):
     ) -> bool:
         """Check whether the request action matches the rule."""
 
-        return request.action == rule.action
+        return request.action.value == rule.action
 
     def _build_output(
         self,
@@ -81,8 +81,8 @@ class PolicyExpert(BaseExpert):
 
         return ExpertOutput(
             expert=self.expert_type,
-            decision=rule.decision,
-            confidence=rule.confidence,
+            decision=rule.decision or DecisionType.REVIEW,
+            confidence=rule.confidence if rule.confidence is not None else 0.0,
             score=100.0,
             risk_level=rule.severity,
             policy_result=(
@@ -104,7 +104,7 @@ class PolicyExpert(BaseExpert):
         return ExpertOutput(
             expert=self.expert_type,
             decision=DecisionType.REVIEW,
-            confidence=0.50,
+            confidence=None,
             score=0.0,
             risk_level=RiskLevel.MEDIUM,
             policy_result=PolicyResult.FAIL,

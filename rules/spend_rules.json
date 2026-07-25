@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "rule_set": "Compliance Rules",
+    "rule_set": "Spend Rules",
     "version": "1.0.0",
     "organization": "Demo Configuration",
     "environment": "Hackathon",
@@ -9,32 +9,47 @@
   },
   "rules": [
     {
-      "rule_id": "CMP-001",
-      "name": "KYC Verification",
+      "rule_id": "SPD-000",
+      "name": "Baseline Spend Screening",
+      "description": "Approve requests within configured spend limits.",
       "enabled": true,
-      "priority": 1,
-      "action": "credit_limit_increase",
-      "conditions": {
-        "kyc_verified": false
-      },
-      "decision": "block",
-      "confidence": 1.0,
-      "severity": "critical",
-      "reason": "Customer must complete KYC verification."
+      "priority": 99,
+      "action": "*",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 0.90,
+      "severity": "low",
+      "reason": "Amount is within configured corporate spend limits."
     },
     {
-      "rule_id": "CMP-002",
-      "name": "AML Review",
+      "rule_id": "SPD-001",
+      "name": "Large Merchant Payment Review",
+      "description": "Review merchant payments above the configured spend threshold.",
+      "enabled": true,
+      "priority": 1,
+      "action": "merchant_payment",
+      "conditions": {
+        "min_amount": 250000
+      },
+      "decision": "review",
+      "confidence": 0.95,
+      "severity": "high",
+      "reason": "Merchant payment exceeds the configured spend review threshold."
+    },
+    {
+      "rule_id": "SPD-002",
+      "name": "Critical Merchant Payment Block",
+      "description": "Block merchant payments above the critical spend threshold.",
       "enabled": true,
       "priority": 2,
       "action": "merchant_payment",
       "conditions": {
-        "aml_flag": true
+        "min_amount": 1000000
       },
-      "decision": "review",
-      "confidence": 0.98,
-      "severity": "high",
-      "reason": "AML monitoring flag detected."
+      "decision": "block",
+      "confidence": 0.99,
+      "severity": "critical",
+      "reason": "Merchant payment exceeds the critical spend threshold."
     }
   ]
 }

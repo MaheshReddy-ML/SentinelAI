@@ -11,30 +11,15 @@
     {
       "rule_id": "AUD-001",
       "name": "Audit High Risk Decisions",
+      "description": "Record every request for the audit trail.",
       "enabled": true,
       "priority": 1,
       "action": "*",
-      "conditions": {
-        "severity": "high"
-      },
+      "conditions": {},
       "decision": "approve",
       "confidence": 1.0,
       "severity": "low",
-      "reason": "Store decision for audit and compliance review."
-    },
-    {
-      "rule_id": "AUD-002",
-      "name": "Audit Blocked Requests",
-      "enabled": true,
-      "priority": 2,
-      "action": "*",
-      "conditions": {
-        "decision": "block"
-      },
-      "decision": "approve",
-      "confidence": 1.0,
-      "severity": "low",
-      "reason": "Persist blocked requests for regulatory reporting."
+      "reason": "Store request context for audit and compliance review."
     }
   ]
 }

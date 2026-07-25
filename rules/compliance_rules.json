@@ -9,8 +9,22 @@
   },
   "rules": [
     {
+      "rule_id": "CMP-000",
+      "name": "Baseline Compliance Screening",
+      "description": "Approve requests with no configured AML, KYC, or restriction violation.",
+      "enabled": true,
+      "priority": 99,
+      "action": "*",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 0.90,
+      "severity": "low",
+      "reason": "No configured AML, KYC, or transaction restriction was triggered."
+    },
+    {
       "rule_id": "CMP-001",
       "name": "KYC Verification",
+      "description": "Block credit limit increases when KYC is not verified.",
       "enabled": true,
       "priority": 1,
       "action": "credit_limit_increase",
@@ -25,6 +39,7 @@
     {
       "rule_id": "CMP-002",
       "name": "AML Review",
+      "description": "Review payments with an AML monitoring flag.",
       "enabled": true,
       "priority": 2,
       "action": "merchant_payment",

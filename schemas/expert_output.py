@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
@@ -26,8 +26,8 @@ class ExpertOutput(BaseModel):
         description="Expert's recommendation for the request."
     )
 
-    confidence: float = Field(
-        ...,
+    confidence: Optional[float] = Field(
+        default=None,
         ge=0.0,
         le=1.0,
         description="Confidence score of the expert's decision (0.0 - 1.0)."
@@ -60,6 +60,6 @@ class ExpertOutput(BaseModel):
     )
 
     evaluated_at: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=lambda: datetime.now(UTC),
         description="Timestamp when the expert completed the evaluation."
     )

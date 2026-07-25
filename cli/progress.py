@@ -1,9 +1,14 @@
-"""Progress presentation for the analysis lifecycle."""
+"""Live progress presentation for the analysis lifecycle."""
 
 from __future__ import annotations
 
 from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from collections.abc import Callable
+from time import sleep
+
+from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+
+from schemas.request import FinancialRequest
 
 STEPS = (
     "Validating request",
@@ -14,19 +19,30 @@ STEPS = (
     "Running Risk Expert",
     "Running Compliance Expert",
     "Running Spend Expert",
+    "Running Audit Expert",
     "Aggregating results",
     "Generating explanation",
 )
 
 
-def show_analysis_progress(console: Console) -> None:
-    """Render the presentation-only analysis lifecycle."""
+def run_analysis_with_progress(
+    console: Console,
+    request: FinancialRequest,
+    analyze: Callable[[FinancialRequest, Callable[[str], None]], object],
+) -> object:
+    """Advance one live indicator as each real engine stage completes."""
     with Progress(
         SpinnerColumn(style="brand"),
         TextColumn("[progress.description]{task.description}"),
+        TimeElapsedColumn(),
         console=console,
-        transient=False,
+        transient=True,
     ) as progress:
-        for step in STEPS:
-            task = progress.add_task(f"[heading]{step}", total=None)
-            progress.update(task, description=f"[success]✓[/success] {step}", completed=1)
+        task = progress.add_task("[heading]Preparing governance analysis", total=None)
+
+        def update(step: str) -> None:
+            progress.update(task, description=f"[brand]●[/brand] {step}")
+            progress.refresh()
+            sleep(0.10)
+
+        return analyze(request, update)

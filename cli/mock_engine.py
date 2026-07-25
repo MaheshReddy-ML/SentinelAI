@@ -1,14 +1,19 @@
-"""Temporary engine adapter used exclusively by the terminal presentation layer.
-
-Replace ``analyze_transaction`` with an integration adapter when the governance
-engine is ready. This module intentionally performs no evaluation or routing.
-"""
+"""Adapter from the terminal presentation layer to the rule-driven engine."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections.abc import Callable
+from time import perf_counter
 from typing import Sequence
 
+from models.experts.compliance_expert import ComplianceExpert
+from models.experts.audit_expert import AuditExpert
+from models.experts.fraud_expert import FraudExpert
+from models.experts.policy_expert import PolicyExpert
+from models.experts.risk_expert import RiskExpert
+from models.experts.spend_expert import SpendExpert
+from schemas.enums import DecisionType
 from schemas.request import FinancialRequest
 
 
@@ -18,8 +23,9 @@ class ExpertResult:
 
     expert: str
     decision: str
-    confidence: float
+    confidence: float | None
     execution_time_ms: float
+    metadata: dict[str, object]
 
 
 @dataclass(frozen=True)
@@ -27,34 +33,39 @@ class AnalysisResult:
     """A render-ready governance report supplied by a governance engine."""
 
     final_decision: str
-    confidence: float
+    confidence: float | None
     explanation: Sequence[str]
     expert_results: Sequence[ExpertResult]
     total_runtime_ms: float
 
 
-def analyze_transaction(request: FinancialRequest) -> AnalysisResult:
-    """Return deterministic demonstration data for the supplied request.
-
-    The request is accepted to preserve the future engine integration boundary;
-    this placeholder neither evaluates it nor reads governance rules.
-    """
-    del request
-    expert_results = (
-        ExpertResult("Policy Expert", "APPROVE", 0.98, 12.4),
-        ExpertResult("Fraud Expert", "APPROVE", 0.96, 18.7),
-        ExpertResult("Risk Expert", "REVIEW", 0.81, 15.2),
-        ExpertResult("Compliance Expert", "APPROVE", 0.99, 11.8),
-        ExpertResult("Spend Expert", "APPROVE", 0.93, 10.6),
-    )
+def analyze_transaction(
+    request: FinancialRequest,
+    on_progress: Callable[[str], None] | None = None,
+) -> AnalysisResult:
+    """Run the rule-driven experts and return the existing render-ready shape."""
+    emit = on_progress or (lambda _: None)
+    started = perf_counter()
+    emit("Validating request")
+    emit("Loading governance rules")
+    experts = (PolicyExpert(), FraudExpert(), RiskExpert(), ComplianceExpert(), SpendExpert(), AuditExpert())
+    emit("Routing relevant experts")
+    outputs = []
+    for expert in experts:
+        emit(f"Running {expert.expert_type.value.title()} Expert")
+        expert_started = perf_counter()
+        output = expert.evaluate(request)
+        outputs.append((output, (perf_counter() - expert_started) * 1000))
+    expert_results = tuple(ExpertResult(f"{output.expert.value.title()} Expert", output.decision.value.upper(), output.confidence, elapsed, output.metadata) for output, elapsed in outputs)
+    emit("Aggregating rule results")
+    precedence = (DecisionType.BLOCK, DecisionType.REVIEW, DecisionType.APPROVE)
+    final = next(decision for decision in precedence if any(output.decision == decision for output, _ in outputs))
+    supporting = [output for output, _ in outputs if output.decision == final and output.expert.value != "audit"]
+    emit("Generating explanation")
     return AnalysisResult(
-        final_decision="REVIEW",
-        confidence=0.93,
-        explanation=(
-            "The governance engine adapter returned a demonstration result.",
-            "One expert requested a manual review before the transaction proceeds.",
-            "Replace the mock adapter to connect a live governance engine.",
-        ),
+        final_decision=final.value.upper(),
+        confidence=max((output.confidence for output in supporting if output.confidence is not None), default=None),
+        explanation=tuple(f"{output.expert.value.title()}: {output.reasoning}" for output, _ in outputs),
         expert_results=expert_results,
-        total_runtime_ms=68.7,
+        total_runtime_ms=(perf_counter() - started) * 1000,
     )

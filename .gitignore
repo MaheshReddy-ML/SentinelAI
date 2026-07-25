@@ -6,6 +6,11 @@ __pycache__/
 *.pyd
 *.whl
 
+# Local model downloads and generated benchmark artifacts
+.sentinel-model-cache/
+models/local/
+benchmarks/*.json
+
 # Virtual Environments
 .venv/
 venv/

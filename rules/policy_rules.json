@@ -152,6 +152,21 @@
       "reason": "Travel booking is an approved customer action."
     },
     {
+      "rule_id": "POL-013",
+      "name": "High-Value Merchant Payment Block",
+      "description": "Block merchant payments above the delegated approval threshold.",
+      "enabled": true,
+      "priority": 2,
+      "action": "merchant_payment",
+      "conditions": {
+        "min_amount": 100001
+      },
+      "decision": "block",
+      "confidence": 0.99,
+      "severity": "critical",
+      "reason": "Merchant payment exceeds the delegated approval threshold."
+    },
+    {
       "rule_id": "POL-011",
       "name": "Balance Inquiry",
       "description": "Allow balance inquiry requests.",

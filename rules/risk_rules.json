@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "rule_set": "Risk Rules",
+    "version": "2.0.0",
+    "organization": "SentinelAI",
+    "environment": "Hackathon",
+    "last_updated": "2026-07-25",
+    "author": "SentinelAI Team"
+  },
+  "rules": [
+    {
+      "rule_id": "RSK-000",
+      "name": "Baseline Risk Screening",
+      "description": "Assign a low baseline risk when no elevated threshold is reached.",
+      "enabled": true,
+      "priority": 99,
+      "action": "*",
+      "weight": 0,
+      "confidence": 0.90,
+      "conditions": {},
+      "severity": "low",
+      "reason": "No configured high-risk threshold was triggered."
+    },
+    {
+      "rule_id": "RSK-001",
+      "name": "High Value Transaction",
+      "description": "Review high-value refund requests.",
+      "enabled": true,
+      "priority": 1,
+      "action": "refund",
+      "weight": 60,
+      "confidence": 0.92,
+      "conditions": {
+        "min_amount": 75000
+      },
+      "severity": "high",
+      "reason": "High-value refund request."
+    },
+    {
+      "rule_id": "RSK-002",
+      "name": "Critical Transaction Amount",
+      "description": "Block transactions above the critical amount threshold.",
+      "enabled": true,
+      "priority": 2,
+      "action": "merchant_payment",
+      "weight": 85,
+      "confidence": 0.99,
+      "conditions": {
+        "min_amount": 500000
+      },
+      "severity": "critical",
+      "reason": "Transaction exceeds critical financial threshold."
+    }
+  ]
+}

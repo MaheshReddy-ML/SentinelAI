@@ -9,6 +9,19 @@
   },
   "rules": [
     {
+      "rule_id": "FRD-000",
+      "name": "Baseline Fraud Screening",
+      "description": "Approve requests with no configured fraud indicator.",
+      "enabled": true,
+      "priority": 99,
+      "action": "*",
+      "conditions": {},
+      "decision": "approve",
+      "confidence": 0.90,
+      "severity": "low",
+      "reason": "No configured fraud indicator was triggered."
+    },
+    {
       "rule_id": "FRD-001",
       "name": "Large Transaction",
       "description": "Review unusually large transactions.",
