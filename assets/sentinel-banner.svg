@@ -25,9 +25,16 @@
       .pulse { animation: pulse 3s ease-in-out infinite; transform-origin: center; }
       .scan { animation: scan 5s linear infinite; }
       .float { animation: float 4s ease-in-out infinite; }
+      .orbit { animation: orbit 9s linear infinite; transform-origin: 946px 151px; }
+      .orbit-reverse { animation: orbit 13s linear infinite reverse; transform-origin: 946px 151px; }
+      .signal { animation: signal 2.4s ease-out infinite; transform-origin: 946px 151px; }
+      .node { animation: node 2.2s ease-in-out infinite; }
       @keyframes pulse { 0%,100% { opacity:.45; } 50% { opacity:1; } }
       @keyframes scan { 0% { transform: translateX(-420px); opacity:0; } 15%,70% { opacity:.8; } 100% { transform: translateX(520px); opacity:0; } }
       @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+      @keyframes orbit { to { transform: rotate(360deg); } }
+      @keyframes signal { 0% { transform: scale(.35); opacity:.7; } 100% { transform: scale(1.35); opacity:0; } }
+      @keyframes node { 0%,100% { opacity:.25; r:2; } 50% { opacity:1; r:4; } }
     </style>
   </defs>
   <rect width="1200" height="360" rx="28" fill="url(#bg)"/>
@@ -40,7 +47,10 @@
     <path class="pulse" d="M912 151L936 175L983 121" stroke="#8BF3D2" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
     <circle cx="946" cy="151" r="91" stroke="#55D6BE" stroke-opacity=".25" stroke-width="2" stroke-dasharray="5 10"/>
   </g>
-  <g fill="#8BF3D2" opacity=".7"><circle cx="830" cy="66" r="3"/><circle cx="1082" cy="242" r="3"/><circle cx="1120" cy="100" r="2"/></g>
+  <g class="orbit"><circle cx="946" cy="58" r="4" fill="#8BF3D2"/><circle cx="1037" cy="151" r="3" fill="#7AA2F7"/></g>
+  <g class="orbit-reverse"><circle cx="874" cy="151" r="3" fill="#8BF3D2"/><circle cx="946" cy="244" r="4" fill="#55D6BE"/></g>
+  <g class="signal" fill="none" stroke="#8BF3D2" stroke-width="1.5"><circle cx="946" cy="151" r="75"/><circle cx="946" cy="151" r="96"/></g>
+  <g fill="#8BF3D2"><circle class="node" cx="830" cy="66" r="3"/><circle class="node" cx="1082" cy="242" r="3" style="animation-delay:.7s"/><circle class="node" cx="1120" cy="100" r="2" style="animation-delay:1.3s"/></g>
   <text x="84" y="119" fill="#8BF3D2" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" letter-spacing="4">AI GOVERNANCE / FINANCIAL SYSTEMS</text>
   <text x="80" y="190" fill="white" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="66" font-weight="800" letter-spacing="-2">SentinelAI</text>
   <text x="86" y="231" fill="#B8D2D4" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="22">Guardrails for decisions that matter.</text>

@@ -1,0 +1,188 @@
+You are a senior Python CLI and UX engineer.
+
+Build a production-quality terminal interface for my project called "SentinelAI".
+
+IMPORTANT:
+- DO NOT implement any AI logic.
+- DO NOT implement routing.
+- DO NOT implement policy evaluation.
+- DO NOT implement fraud/risk/compliance logic.
+- The CLI should only act as a presentation layer that calls placeholder functions.
+
+Tech Stack
+----------
+Python 3.12+
+Typer (preferred) or Click
+Rich
+Rich Console
+Rich Table
+Rich Panel
+Rich Progress
+Rich Tree
+Rich Live
+Pydantic models already exist.
+
+Theme
+-----
+The CLI should look like an enterprise developer tool similar to:
+
+- Claude Code
+- GitHub CLI
+- Docker
+- Terraform
+- kubectl
+
+Dark terminal aesthetic with clean colors.
+
+Project Name
+------------
+SentinelAI
+Adaptive Mixture of Experts Governance Platform
+
+Commands
+--------
+
+sentinel analyze
+
+Interactive mode asking for:
+
+- Amount
+- Currency
+- Merchant
+- Category
+- Country
+- Payment Method
+- Timestamp
+- User ID (optional)
+
+After collecting inputs, call:
+
+analyze_transaction(request)
+
+This function should be a placeholder only.
+
+Display a loading sequence like:
+
+✓ Validating request
+✓ Loading governance rules
+✓ Routing experts
+✓ Running Policy Expert
+✓ Running Fraud Expert
+✓ Running Risk Expert
+✓ Running Compliance Expert
+✓ Running Spend Expert
+✓ Aggregating results
+✓ Generating explanation
+
+using Rich Progress.
+
+The placeholder function should return mocked data.
+
+Display output like:
+
+──────────────────────────────────
+SentinelAI Governance Report
+──────────────────────────────────
+
+Request Summary
+
+(table)
+
+Expert Results
+
+(table)
+
+Columns:
+
+Expert
+Decision
+Confidence
+Execution Time
+
+Policy Expert
+Fraud Expert
+Risk Expert
+Compliance Expert
+Spend Expert
+
+Then show:
+
+Final Decision
+
+inside a Rich Panel.
+
+Below that display
+
+Explanation
+
+as bullet points.
+
+Then show
+
+Performance Metrics
+
+like
+
+Total Runtime
+Experts Executed
+Average Confidence
+
+Also support
+
+sentinel analyze sample.json
+
+which loads a JSON file and displays the same report.
+
+Folder Structure
+----------------
+
+cli/
+    __init__.py
+    app.py
+    commands.py
+    prompts.py
+    display.py
+    progress.py
+    theme.py
+    mock_engine.py
+
+Keep UI completely separated from business logic.
+
+The CLI must never know how policy evaluation works.
+
+It should only receive a result object and render it beautifully.
+
+Design Goals
+------------
+
+- Modular
+- Enterprise quality
+- Beautiful Rich formatting
+- Clean architecture
+- Easily replace mock_engine.py with the real governance engine later
+- No AI logic
+- No TODO comments
+- Type hints everywhere
+- Professional code quality
+
+The output should feel like a commercial cybersecurity/governance CLI rather than a university project.
+
+One small improvement I'd make to the project structure is to keep the CLI isolated from the engine:
+sentinel_ai/
+│
+├── cli/
+│   ├── app.py
+│   ├── commands.py
+│   ├── display.py
+│   ├── progress.py
+│   ├── theme.py
+│   └── mock_engine.py   # Temporary
+│
+├── models/
+├── schemas/
+├── rules/
+├── simulations/
+├── tests/
+│
+├── main.py
+└── pyproject.toml

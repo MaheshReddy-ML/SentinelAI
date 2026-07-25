@@ -1,0 +1,10 @@
+{
+  "amount": 1250.75,
+  "currency": "USD",
+  "merchant": "Northstar Travel",
+  "category": "travel",
+  "country": "US",
+  "payment_method": "corporate_card",
+  "timestamp": "2026-07-25T10:30:00+05:30",
+  "user_id": "demo-user"
+}
