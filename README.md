@@ -9,12 +9,13 @@
 
 <p>
   <a href="#-run-the-cli">Run CLI</a> ·
+  <a href="#-batch-governance-at-a-glance">Batch operations</a> ·
   <a href="#-what-is-live">What is live</a> ·
   <a href="#-architecture">Architecture</a> ·
   <a href="#-decision-traceability">Decision traceability</a>
 </p>
 
-<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=17&duration=2600&pause=700&color=55D6BE&center=true&vCenter=true&width=760&lines=Local+extraction.+Deterministic+governance.;Policy+%E2%86%92+Fraud+%E2%86%92+Risk+%E2%86%92+Compliance+%E2%86%92+Spend+%E2%86%92+Audit;Every+decision+shows+its+matched+rules." alt="Animated SentinelAI tagline" />
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=17&duration=2600&pause=700&color=55D6BE&center=true&vCenter=true&width=840&lines=Local+extraction.+Deterministic+governance.;Decision+lenses%3A+Policy+%E2%86%92+Fraud+%E2%86%92+Risk+%E2%86%92+Compliance+%E2%86%92+Spend.;Audit+actions+are+traceability+%E2%80%94+never+decision+evidence." alt="Animated SentinelAI governance principles" />
 
 <img src="https://img.shields.io/badge/●%20rule%20trace-live-55d6be?style=flat-square" alt="Animated rule trace status" />
 <img src="https://img.shields.io/badge/●%20local%20inference-on--device-7aa2f7?style=flat-square" alt="On-device local inference" />
@@ -48,6 +49,41 @@ python -m pip install -e .
 ```bash
 sentinel analyze simulations/sample.json
 ```
+
+The CLI accepts one JSON object, a JSON array, a `{ "requests": [...] }` object, or JSON Lines. Arrays render a compact batch dashboard with decision counts and percentages, descriptive decision rules, and clear validation handling. Only decision-triggering Policy, Fraud, Risk, Compliance, and Spend rules appear in batch summaries—audit trace actions never affect or clutter the governance decision view.
+
+### Analyze every JSON file in a folder
+
+```bash
+sentinel analyze --directory simulations
+```
+
+Each file receives its own labeled batch report, followed by an overall directory summary. For large files, every valid request is processed in bounded 100-request chunks; the terminal previews the first 25 rows while totals and rule frequency cover the complete batch. Multi-chunk runs show `Chunks Processed: X/Y`; every report includes Governance Runtime, a grouped **Skipped Requests** table, and a completion footer. File batches use the deterministic rule engine directly and do not consume local-LLM context.
+
+## ✦ Batch governance at a glance
+
+<div align="center">
+
+```text
+╭────────────────────────── Batch Decision Overview ──────────────────────────╮
+│ Processed Requests  88         Approved            49 (55.7%)              │
+│ Review               9 (10.2%) Blocked             30 (34.1%)              │
+│ Governance Runtime   13.5 ms  ·  Chunks Processed 2/2                       │
+╰─────────────────────────────────────────────────────────────────────────────╯
+
+Request ID / User ID         Decision    Decision Rule
+req-1042 / emp-1002          BLOCK       POL-013 (High-Value Merchant Payment Block)
+
+Decision-Triggering Rule Frequency        Skipped Requests
+POL-013  High-Value Merchant Payment Block  Row 25  amount — must be greater than 0
+```
+
+</div>
+
+| Decision evidence | Audit trace |
+| --- | --- |
+| Explains **why** a request was approved, reviewed, or blocked. | Records background traceability separately in the detailed single-request report. |
+| Batch views show Policy, Fraud, Risk, Compliance, and Spend rules only. | `AUD-*` rules never appear in the Decision Rule column or batch frequency table. |
 
 ### Analyze natural language locally
 
@@ -93,8 +129,8 @@ SENTINELAI // Adaptive Governance Platform
 ● Running Policy / Fraud / Risk      ● Aggregating results
 
 ──────────────── SentinelAI Governance Report ────────────────
- AI Understanding  ·  Request Summary  ·  Expert Results
- Matched rule IDs  ·  Final Decision  ·  Runtime metrics
+ AI Understanding  ·  Request Summary  ·  Decision Evidence
+ Matched rule names  ·  Audit Actions  ·  Final Decision  ·  Runtime metrics
 ```
 
 The UI remains isolated in [`cli/`](cli/). It builds a request, calls `analyze_transaction(request)`, and renders the returned result. `models/llm/` is restricted to local natural-language extraction; [`cli/mock_engine.py`](cli/mock_engine.py) invokes deterministic rule experts and aggregates their results.
@@ -151,7 +187,7 @@ sentinel-ai/
 
 ## 🔎 Decision traceability
 
-Each report includes an **AI Understanding** panel (explicit facts, missing facts, and timings), then one row per expert with matched rule IDs, decision, confidence, and execution time. The final decision is derived from the deterministic expert outputs; the local model never approves, blocks, reviews, or scores a request.
+Each detailed single-request report includes an **AI Understanding** panel (explicit facts, missing facts, and timings), then **Decision Evidence** rows for the experts that can govern the outcome. **Audit Actions** are rendered separately for traceability. The final decision is derived only from deterministic Policy, Fraud, Risk, Compliance, and Spend outputs; the local model and audit trace never approve, block, review, or score a request.
 
 When no policy exists for an action, the relevant expert returns an intentional `REVIEW` with an undefined-policy explanation rather than a generic pass.
 
@@ -164,7 +200,7 @@ When no policy exists for an action, the relevant expert returns an intentional 
 | Risk | Exposure and amount-based risk signals |
 | Compliance | KYC, AML, and regulatory constraints |
 | Spend | Budget and spending-pattern guardrails |
-| Audit | Traceability and review context |
+| Audit | Traceability and review context, rendered separately from decision-triggering rules |
 
 ## 🛠️ Development checks
 

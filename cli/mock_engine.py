@@ -26,6 +26,7 @@ class ExpertResult:
     confidence: float | None
     execution_time_ms: float
     metadata: dict[str, object]
+    risk_level: str | None
 
 
 @dataclass(frozen=True)
@@ -56,7 +57,7 @@ def analyze_transaction(
         expert_started = perf_counter()
         output = expert.evaluate(request)
         outputs.append((output, (perf_counter() - expert_started) * 1000))
-    expert_results = tuple(ExpertResult(f"{output.expert.value.title()} Expert", output.decision.value.upper(), output.confidence, elapsed, output.metadata) for output, elapsed in outputs)
+    expert_results = tuple(ExpertResult(f"{output.expert.value.title()} Expert", output.decision.value.upper(), output.confidence, elapsed, output.metadata, output.risk_level.value if output.risk_level else None) for output, elapsed in outputs)
     emit("Aggregating rule results")
     precedence = (DecisionType.BLOCK, DecisionType.REVIEW, DecisionType.APPROVE)
     final = next(decision for decision in precedence if any(output.decision == decision for output, _ in outputs))
